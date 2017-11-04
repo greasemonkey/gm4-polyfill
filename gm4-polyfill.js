@@ -4,7 +4,7 @@ existing/legacy APIs.  Say for example your user script includes
 
     // @grant GM_getValue
 
-And you'd like to be compatible with both Greasemonkey 4 and Greasemonkey 4
+And you'd like to be compatible with both Greasemonkey 3 and Greasemonkey 4
 (and for that matter all versions of Violentmonkey, Tampermonkey, and any other
 user script engine).  Add:
 
