@@ -63,7 +63,6 @@ if (typeof GM_registerMenuCommand == 'undefined') {
       document.body.appendChild(menu);
       document.body.setAttribute('contextmenu', 'gm-registered-menu');
     }
-    document.body.setAttribute('contextmenu', menu.getAttribute('id'));
     let menuItem = document.createElement('menuitem');
     menuItem.textContent = caption;
     menuItem.addEventListener('click', commandFunc, true);
