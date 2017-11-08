@@ -83,7 +83,7 @@ Object.entries({
 }).forEach(([oldKey, newKey]) => {
   let old = this[oldKey];
   if (old) GM[newKey] = function() {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       try {
         resolve(old.apply(this, arguments));
       } catch (e) {
