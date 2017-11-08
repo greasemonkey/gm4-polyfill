@@ -52,7 +52,10 @@ if (typeof GM_registerMenuCommand == 'undefined') {
       console.error('GM_registerMenuCommand got no body.');
       return;
     }
-    let menu = document.getElementById('gm-registered-menu');
+    let menu = null;
+    if (document.body.getAttribute('contextmenu')) {
+        menu = document.querySelector('menu#'+document.body.getAttribute('contextmenu'));
+    }
     if (!menu) {
       menu = document.createElement('menu')
       menu.setAttribute('id', 'gm-registered-menu');
