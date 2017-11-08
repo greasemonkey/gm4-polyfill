@@ -43,7 +43,6 @@ if (typeof GM_addStyle == 'undefined') {
     return null;
   }
 }
-GM.addStyle = GM_addStyle;
 
 
 if (typeof GM_registerMenuCommand == 'undefined') {
@@ -69,10 +68,10 @@ if (typeof GM_registerMenuCommand == 'undefined') {
     menu.appendChild(menuItem);
   }
 }
-GM.registerMenuCommand = GM_registerMenuCommand;
 
 
 Object.entries({
+  'GM_addStyle': 'addStyle',
   'GM_deleteValue': 'deleteValue',
   'GM_getResourceURL': 'getResourceUrl',
   'GM_getValue': 'getValue',
@@ -80,6 +79,7 @@ Object.entries({
   'GM_listValues': 'listValues',
   'GM_notification': 'notification',
   'GM_openInTab': 'openInTab',
+  'GM_registerMenuCommand': 'registerMenuCommand',
   'GM_setClipboard': 'setClipboard',
   'GM_setValue': 'setValue',
   'GM_xmlhttpRequest': 'xmlHttpRequest',
