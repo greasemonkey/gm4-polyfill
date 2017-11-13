@@ -25,12 +25,12 @@ Greasemonkey 4.
 */
 
 if (typeof GM == 'undefined') {
-  GM = {'log': console.log};
+  GM = {};
 }
 
 
 if (typeof GM_addStyle == 'undefined') {
-  function GM_addStyle(aCss) {
+  this.GM_addStyle = (aCss) => {
     'use strict';
     let head = document.getElementsByTagName('head')[0];
     if (head) {
@@ -41,20 +41,18 @@ if (typeof GM_addStyle == 'undefined') {
       return style;
     }
     return null;
-  }
+  };
 }
 
 
 if (typeof GM_registerMenuCommand == 'undefined') {
-  function GM_registerMenuCommand(caption, commandFunc, accessKey) {
+  this.GM_registerMenuCommand = (caption, commandFunc, accessKey) => {
     if (!document.body) {
       console.error('GM_registerMenuCommand got no body.');
       return;
     }
-    let menu = null;
-    if (document.body.getAttribute('contextmenu')) {
-        menu = document.querySelector('menu#'+document.body.getAttribute('contextmenu'));
-    }
+    let contextMenu = document.body.getAttribute('contextmenu');
+    let menu = (contextMenu ? document.querySelector('menu#' + contextMenu) : null);
     if (!menu) {
       menu = document.createElement('menu')
       menu.setAttribute('id', 'gm-registered-menu');
@@ -66,8 +64,18 @@ if (typeof GM_registerMenuCommand == 'undefined') {
     menuItem.textContent = caption;
     menuItem.addEventListener('click', commandFunc, true);
     menu.appendChild(menuItem);
-  }
+  };
 }
+
+
+Object.entries({
+  'log': console.log,
+  'info': GM_info,
+}).forEach(([newKey, old]) => {
+  if (old && (typeof GM[newKey] == 'undefined')) {
+    GM[newKey] = old;
+  }
+});
 
 
 Object.entries({
@@ -75,7 +83,6 @@ Object.entries({
   'GM_deleteValue': 'deleteValue',
   'GM_getResourceURL': 'getResourceUrl',
   'GM_getValue': 'getValue',
-  'GM_info': 'info',
   'GM_listValues': 'listValues',
   'GM_notification': 'notification',
   'GM_openInTab': 'openInTab',
@@ -85,13 +92,15 @@ Object.entries({
   'GM_xmlhttpRequest': 'xmlHttpRequest',
 }).forEach(([oldKey, newKey]) => {
   let old = this[oldKey];
-  if (old) GM[newKey] = function() {
-    return new Promise((resolve, reject) => {
-      try {
-        resolve(old.apply(this, arguments));
-      } catch (e) {
-        reject(e);
-      }
-    });
+  if (old && (typeof GM[newKey] == 'undefined')) {
+    GM[newKey] = () => {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(old.apply(this, arguments));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    };
   }
 });
