@@ -89,13 +89,15 @@ Object.entries({
   'GM_xmlhttpRequest': 'xmlHttpRequest',
 }).forEach(([oldKey, newKey]) => {
   let old = this[oldKey];
-  if (old) GM[newKey] = function() {
-    return new Promise((resolve, reject) => {
-      try {
-        resolve(old.apply(this, arguments));
-      } catch (e) {
-        reject(e);
-      }
-    });
+  if (old && (typeof GM[newKey] == 'undefined')) {
+    GM[newKey] = function() {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(old.apply(this, arguments));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    };
   }
 });
