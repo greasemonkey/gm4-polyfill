@@ -70,12 +70,16 @@ if (typeof GM_registerMenuCommand == 'undefined') {
 }
 
 
+if (typeof GM.info == 'undefined') {
+  GM.info = GM_info;
+}
+
+
 Object.entries({
   'GM_addStyle': 'addStyle',
   'GM_deleteValue': 'deleteValue',
   'GM_getResourceURL': 'getResourceUrl',
   'GM_getValue': 'getValue',
-  'GM_info': 'info',
   'GM_listValues': 'listValues',
   'GM_notification': 'notification',
   'GM_openInTab': 'openInTab',
