@@ -25,7 +25,7 @@ Greasemonkey 4.
 */
 
 if (typeof GM == 'undefined') {
-  GM = {'log': console.log};
+  GM = {};
 }
 
 
@@ -68,9 +68,14 @@ if (typeof GM_registerMenuCommand == 'undefined') {
 }
 
 
-if (typeof GM.info == 'undefined') {
-  GM.info = GM_info;
-}
+Object.entries({
+  'log': console.log,
+  'info': GM_info,
+}).forEach(([newKey, old]) => {
+  if (old && (typeof GM[newKey] == 'undefined')) {
+    GM[newKey] = old;
+  }
+});
 
 
 Object.entries({
