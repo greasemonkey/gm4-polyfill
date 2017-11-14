@@ -54,7 +54,7 @@ if (typeof GM_registerMenuCommand == 'undefined') {
     let contextMenu = document.body.getAttribute('contextmenu');
     let menu = (contextMenu ? document.querySelector('menu#' + contextMenu) : null);
     if (!menu) {
-      menu = document.createElement('menu')
+      menu = document.createElement('menu');
       menu.setAttribute('id', 'gm-registered-menu');
       menu.setAttribute('type', 'context');
       document.body.appendChild(menu);
