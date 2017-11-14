@@ -24,12 +24,12 @@ Greasemonkey 4.
     })();
 */
 
-if (typeof GM == 'undefined') {
+if (typeof GM === 'undefined') {
   GM = {};
 }
 
 
-if (typeof GM_addStyle == 'undefined') {
+if (typeof GM_addStyle === 'undefined') {
   this.GM_addStyle = (aCss) => {
     'use strict';
     let head = document.getElementsByTagName('head')[0];
@@ -45,7 +45,7 @@ if (typeof GM_addStyle == 'undefined') {
 }
 
 
-if (typeof GM_registerMenuCommand == 'undefined') {
+if (typeof GM_registerMenuCommand === 'undefined') {
   this.GM_registerMenuCommand = (caption, commandFunc, accessKey) => {
     if (!document.body) {
       console.error('GM_registerMenuCommand got no body.');
@@ -72,7 +72,7 @@ Object.entries({
   'log': console.log,
   'info': GM_info,
 }).forEach(([newKey, old]) => {
-  if (old && (typeof GM[newKey] == 'undefined')) {
+  if (old && (typeof GM[newKey] === 'undefined')) {
     GM[newKey] = old;
   }
 });
@@ -92,7 +92,7 @@ Object.entries({
   'GM_xmlhttpRequest': 'xmlHttpRequest',
 }).forEach(([oldKey, newKey]) => {
   let old = this[oldKey];
-  if (old && (typeof GM[newKey] == 'undefined')) {
+  if (old && (typeof GM[newKey] === 'undefined')) {
     GM[newKey] = function() {
       return new Promise((resolve, reject) => {
         try {
