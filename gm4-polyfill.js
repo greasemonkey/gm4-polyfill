@@ -68,6 +68,20 @@ if (typeof GM_registerMenuCommand == 'undefined') {
 }
 
 
+if (typeof GM_getResourceText == 'undefined') {
+  this.GM_getResourceText = (aRes) => {
+    'use strict';
+    return GM.getResourceUrl(aRes)
+      .then(url => fetch(url))
+      .then(resp => resp.text())
+      .catch(function(error) {
+        GM.log('Request failed', error);
+        return null;
+      });
+  };
+}
+
+
 Object.entries({
   'log': console.log,
   'info': GM_info,
@@ -90,6 +104,7 @@ Object.entries({
   'GM_setClipboard': 'setClipboard',
   'GM_setValue': 'setValue',
   'GM_xmlhttpRequest': 'xmlHttpRequest',
+  'GM_getResourceText': 'getResourceText',
 }).forEach(([oldKey, newKey]) => {
   let old = this[oldKey];
   if (old && (typeof GM[newKey] == 'undefined')) {
