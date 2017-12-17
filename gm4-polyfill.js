@@ -93,10 +93,10 @@ Object.entries({
 }).forEach(([oldKey, newKey]) => {
   let old = this[oldKey];
   if (old && (typeof GM[newKey] == 'undefined')) {
-    GM[newKey] = function() {
+    GM[newKey] = function(...args) {
       return new Promise((resolve, reject) => {
         try {
-          resolve(old.apply(this, arguments));
+          resolve(old.apply(this, args));
         } catch (e) {
           reject(e);
         }
