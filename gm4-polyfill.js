@@ -25,7 +25,7 @@ Greasemonkey 4.
 */
 
 if (typeof GM == 'undefined') {
-  GM = {};
+  this.GM = {};
 }
 
 
