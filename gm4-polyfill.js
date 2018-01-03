@@ -48,7 +48,17 @@ if (typeof GM_addStyle == 'undefined') {
 if (typeof GM_registerMenuCommand == 'undefined') {
   this.GM_registerMenuCommand = (caption, commandFunc, accessKey) => {
     if (!document.body) {
-      console.error('GM_registerMenuCommand got no body.');
+      if (document.readyState === 'loading'
+        && document.documentElement && document.documentElement.localName === 'html') {
+        new MutationObserver((mutations, observer) => {
+          if (document.body) {
+            observer.disconnect();
+            GM_registerMenuCommand(caption, commandFunc, accessKey);
+          }
+        }).observe(document.documentElement, {childList: true});
+      } else {
+        console.error('GM_registerMenuCommand got no body.');
+      }
       return;
     }
     let contextMenu = document.body.getAttribute('contextmenu');
