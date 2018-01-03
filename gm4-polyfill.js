@@ -93,7 +93,7 @@ if (typeof GM_getResourceText == 'undefined') {
 
 
 Object.entries({
-  'log': console.log,
+  'log': console.log.bind(console),  // Pale Moon compatibility.  See #13.
   'info': GM_info,
 }).forEach(([newKey, old]) => {
   if (old && (typeof GM[newKey] == 'undefined')) {
