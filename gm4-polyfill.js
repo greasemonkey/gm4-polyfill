@@ -1,27 +1,12 @@
 /*
-This helper script bridges compatibility between the Greasemonkey 4 APIs and
-existing/legacy APIs.  Say for example your user script includes
+  Version: 1.1.2
 
-    // @grant GM_getValue
+  Polyfill for scripts written for Greasemonkey 4's asynchronous APIs to be
+  functional in other user-script managers. For usage information see:
+    https://github.com/greasemonkey/gm4-polyfill
 
-And you'd like to be compatible with both Greasemonkey 3 and Greasemonkey 4
-(and for that matter all versions of Violentmonkey, Tampermonkey, and any other
-user script engine).  Add:
-
-    // @grant GM.getValue
-    // @require https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
-
-And switch to the new (GM-dot) APIs, which return promises.  If your script
-is running in an engine that does not provide the new asynchronous APIs, this
-helper will add them, based on the old APIs.
-
-If you use `await` at the top level, you'll need to wrap your script in an
-`async` function to be compatible with any user script engine besides
-Greasemonkey 4.
-
-    (async () => {
-    let x = await GM.getValue('x');
-    })();
+  Copyright (c) 2017 Anthony Lieuallen. Distributed under the MIT license. See:
+    https://github.com/greasemonkey/gm4-polyfill/blob/master/LICENSE
 */
 
 if (typeof GM == 'undefined') {
