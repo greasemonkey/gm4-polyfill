@@ -1,0 +1,145 @@
+
+Android Open Source Project
+
+AOSP   Configure   Enterprise
+Implementing Device Administration
+
+
+This section describes how to enable and validate device administration features required to prepare devices for managed profiles. It also covers device owner user cases that are essential in a corporate environment.
+
+In addition to AOSP code, a device requires the following components to function with managed profiles.
+
+General requirements
+Devices intending to support device administration must meet the following general requirements.
+
+Thermal HAL values
+Android 7.0 and later includes support for HardwarePropertiesManager API, a device monitoring and health reporting API that enables applications to query the state of device hardware. This API is exposed via android.os.HardwarePropertiesManager and makes calls through HardwarePropertiesManagerService to the hardware thermal HAL (hardware/libhardware/include/hardware/thermal.h). It is a protected API, meaning only device/profile owner Device Policy Controller (DPC) applications and the current VrListenerService can call it.
+
+To support the HardwarePropertiesManager API, the device thermal HAL implementation must be able to report the following values:
+
+Value	Reporting Scale	Enables
+Temperature of [CPU|GPU|Battery|Device Skin]	Temperature of component in degrees Celsius	Apps can check device temperatures and component throttling/shutdown temperatures
+CPU active/total enabled times	Time in milliseconds	Apps can check CPU usage per core
+Fan speed	RPM	Apps can check fan speed
+Implementations should correctly handle reporting values situations when a core (or GPU, battery, fan) goes offline or is plugged/unplugged.
+
+No low-RAM
+Device should not be a low-RAM device, meaning ro.config.low_ram should not be defined. The framework automatically limits the number of users to 1 when the low_ram flag is defined.
+
+Uses-feature
+Devices must define the following uses-feature:
+
+android.software.managed_users
+android.software.device_admin
+To confirm these uses-feature values have been defined on a device, run: adb shell pm list features.
+
+Essential apps only
+By default, only applications essential for correct operation of the profile should be enabled as part of provisioning a managed device. OEMs must ensure the managed profile or device has all required applications by modifying:
+
+vendor_required_apps_managed_profile.xml
+vendor_required_apps_managed_device.xml
+vendor_disallowed_apps_managed_profile.xml
+vendor_disallowed_apps_managed_device.xml
+/*
+ * The following are for Android 9 and higher only
+ */
+vendor_required_apps_managed_user.xml
+vendor_disallowed_apps_managed_user.xml
+Required and disallowed apps for managed users are applied to secondary users created via DevicePolicyManager#createAndManageUser.
+
+Examples from a Nexus device:
+
+Android 8.x and earlier
+
+pacakages/apps/ManagedProvisioning/res/values/vendor_required_apps_managed_device.xml
+Android 9 and higher
+
+frameworks/base/core/res/res/values/vendor_required_apps_managed_device.xml
+<resources>
+  <!-- A list of apps to be retained on the managed device -->
+  <string-array name="vendor_required_apps_managed_device">
+    <item>com.android.vending</item> <!--­Google Play -->
+    <item>com.google.android.gms</item> <!--­Required by Play -->
+    <item>com.google.android.contacts</item> <!--­Google or OEM Contacts­-->
+    <item>com.google.android.googlequicksearchbox</item> <!--­Google Launcher -->
+    <item>com.google.android.launcher</item> <!--­Google Launcher or OEM Launcher -->
+    <item>com.google.android.dialer</item> <!--­Google or OEM dialer to enable making phone calls -->
+  </string-array>
+</resources>
+Android 8.x and earlier
+
+packages/apps/ManagedProvisioning/res/values/vendor_required_apps_managed_profile.xml
+Android 9 and higher
+
+frameworks/base/core/res/res/values/vendor_required_apps_managed_profile.xml
+<resources>
+    <!-- A list of apps to be retained in the managed profile. This includes any Google experience apps required. -->
+    <string-array name="vendor_required_apps_managed_profile">
+        <item>com.android.vending</item> <!-- Google Play -->
+        <item>com.google.android.gms</item> <!-- Required by Play -->
+        <item>com.google.android.contacts</item> <!-- Google or OEM Contacts -->
+    </string-array>
+</resources>
+Launcher requirements
+You must update the Launcher to support badging applications with the icon badge (provided in AOSP to represent the managed applications) and other badge user interface elements such as recents and notifications. If you use launcher3 in AOSP without modifications, then you likely already support this badging feature.
+
+NFC requirements
+Devices with NFC must enable NFC during the out-of-the-box experience (i.e., setup wizard) and be configured to accept managed provisioning intents:
+
+packages/apps/Nfc/res/values/provisioning.xml
+<bool name="enable_nfc_provisioning">true</bool>
+<item>application/com.android.managedprovisioning</item>
+Setup requirements
+Devices that include an out-of-box experience (i.e., setup wizard) should implement device owner provisioning. When the out-of-box experience opens, it should check if another process (such as device owner provisioning) has already finished the user setup and, if so, it should fire a home intent and finish the setup. This intent is caught by the provisioning application, which then hands control to the newly-set device owner.
+
+To meet setup requirements, add the following code to the device setup's main activity:
+
+@Override
+   protected void onStart() {
+        super.onStart();
+
+        // When returning to a setup wizard activity, check to see if another setup process
+        // has intervened and, if so, complete an orderly exit
+        boolean completed = Settings.Secure.getInt(getContentResolver(),
+                Settings.Secure.USER_SETUP_COMPLETE, 0) != 0;
+        if (completed) {
+           startActivity(new Intent(Intent.ACTION_MAIN, null)
+                .addCategory(Intent.CATEGORY_HOME)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
+           finish();
+       }
+
+       ...
+   }
+Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 3.0 License, and code samples are licensed under the Apache 2.0 License. For details, see our Site Policies. Java is a registered trademark of Oracle and/or its affiliates.
+
+Last updated September 11, 2018.
+
+Build
+Android Repository
+Requirements
+Downloading
+Preview Binaries
+Factory Images
+Driver Binaries
+GitHub
+Connect
+@Android on Twitter
+@AndroidDev on Twitter
+Android Blog
+Google Security Blog
+Platform on Google Groups
+Building on Google Groups
+Porting on Google Groups
+Get Help
+Android Help Center
+Pixel Help Center
+Nexus Help Center
+www.android.com
+Google Mobile Services
+Stack Overflow
+Issue Tracker
+ENGLISH
+About Android Community Legal License Privacy Site Feedback
